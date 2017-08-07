@@ -1,0 +1,7 @@
+{
+  "name": "api-ai demo",
+  "description": "webhook for api ai basleline",
+  "repository": "https://github.com/mahou-neko/api-ai",
+  "logo": "https://api.ai/_static/0684c29c9b/images/apiai/lockup.svg",
+  "keywords": ["api.ai", "natural language"]
+}
