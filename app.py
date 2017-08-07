@@ -244,14 +244,14 @@ def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,l
         return netarchintent(netarch,netcomp,topo,addinfo,info) #add contextname to params and change context accordingly 
     if cong in congestioncontrols:
         return congestionintent(cong,info,layer,addinfo)
+    if layer in layers:
+        return layerintent(layer,info,addinfo,model)
     if model in models:
         return modelintent(model,info,addinfo)
     if netarch in networkarchs or netcomp in networkcomps:
         return netarchintent(netarch,netcomp,topo,addinfo,info)
     if prot in protocols:
         return protocolintent(prot,info,addinfo,service)
-    if layer in layers:
-        return layerintent(layer,info,addinfo,model)
 
     if service == "service":
         serviceintent(service,addinfo,info)
