@@ -164,6 +164,21 @@ def processRequest(req):
         topo = parameters.get("Topologies")
         res = netarchintent(netarch,netcomp,topo,addinfo,info)
 
+    elif req.get("result").get("action")=="acronym_intent":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        res = acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer)
+
     #elif req.get("result").get("action")=="greeting":
         #result = req.get("result")
         #parameters = result.get("parameters")
@@ -182,6 +197,81 @@ def makeYqlQuery(req):
         return None
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
+
+def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong):
+    protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC']
+    networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
+    models = ['OSI','TCP/IP','model']
+    congestioncontrols = ['s-aloha','CSMA','CSMA/CD','CSMA/CA','RED']
+
+    if topo == "peer-to-peer" or topo == "dht":
+        return netarchintent(netarch,netcomp,topo,addinfo,info) #add contextname to params and change context accordingly 
+    if cong in congestioncontrols:
+        return congestionintent(cong,info,layer,addinfo)
+    if model in models:
+        return modelintent(model,info,addinfo)
+    if netarch in networkarchs:
+        return netarchintent(netarch,netcomp,topo,addinfo,info)
+    if prot in protocols:
+        return protocolintent(prot,info,addinfo,service)
+
+    speech = "I am sorry, but I do not know the meaning of this acronym... However, I can ask someone and get back to you, if thats okay 😊"
+
+
+    contextname = "acronym_intent" #add reset context for no follow up
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
+def acronymintent_first_try(info,addinfo,netarch,netcomp,topo,prot,model):
+    net_arch_acro = {'SOA':'SOA = Service Oriented Architectures',
+                        'SAAS':'SAAS = Software AS A Service',
+                        'IAAS':'IAAS = Infrastructure As A Service',
+                        'PAAS':'PAAS = Platform AS A Service'}
+    prot_acro = {'TCP':'TCP = Transmission Control Protocol',
+                'HTTP':'HTTP = Hyper Text Transfer Protocol',
+                'SMTP':'SMTP = Simple Mail Transport Protocol',
+                'IMAP':'IMAP = Internet Message Access Protocol',
+                'DNS':'DNS = Domain Name System',
+                'SIP':'SIP = Session Initiation Protocol',
+                'RTP':'RTP = Real-time Transport Protocol',
+                'HTML':'HTML = Hypertext Markup Language',
+                'IP':'IP = Internet Protocol',
+                'UDP':'UDP = User Datagram Protocol',
+                'protocol':'Protocols are sets of rules which give structure and meaning to exchanged messages. They are deployed for implementing Services and are usually not distinguishable for users. Would you like to know something about services?',
+                'RPC':'RPC = Remote Procedure Call',
+                'RED':'RED = Random Early Detection',
+                }
+    model_acro = {'OSI':'OSI model = Open Systems Interconnection model',
+                    'TCP/IP':'TCP/IP = Internet protocol suite named after the originally used protocols Transmission Control Protocol (TCP) and the Internet Protocol (IP)'}
+    #congestion could be added here as well as models
+    if netarch in net_arch_acro:
+        speech = net_arch_acro[netarch]
+    elif prot in prot_acro:
+        speech = prot_acro[prot]
+    elif model in model_acro:
+        speech = model_acro[model]
+
+    if model == "model":
+        speech = "There are two types of conceptual models which are used on the Internet and similar comupter networks to facilitate communication and offer services. One would be the TCP/IP model and the other would be the OSI model. 😊 Which model would you like to know more about?"
+        addinfo = "moreM"
+    if prot == "protocols":
+        speech = "Protocols are sets of rules which give structure and meaning to exchanged messages. They are deployed for implementing Services and are usually not distinguishable for users. Would you like to know something about services?"
+        addinfo = "moreP"
+    contextname = "acronym_conversation"
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
 
 def netarchintent(netarch,netcomp,topo,addinfo,info):
     net_arch_def = {'cloud':'Well clouds are means to deploy massive and mostly transparent distributed networks. The common use resources increases the workload and hence reduces costs. Would you like to hear more about the different types of cloud services?',
