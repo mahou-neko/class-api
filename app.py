@@ -250,6 +250,9 @@ def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,l
         return netarchintent(netarch,netcomp,topo,addinfo,info)
     if prot in protocols:
         return protocolintent(prot,info,addinfo,service)
+    if layer in layers:
+        return layerintent(layer,info,addinfo,model)
+
     if service == "service":
         serviceintent(service,addinfo,info)
 
