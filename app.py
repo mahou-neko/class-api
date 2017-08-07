@@ -179,6 +179,36 @@ def processRequest(req):
         layer = parameters.get("layer")
         res = acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer)
 
+    elif req.get("result").get("action")=="definition_intent":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        res = definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer)
+
+    elif req.get("result").get("action")=="explanation_intent":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        res = explanationintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer)
+
     #elif req.get("result").get("action")=="greeting":
         #result = req.get("result")
         #parameters = result.get("parameters")
@@ -197,6 +227,44 @@ def makeYqlQuery(req):
         return None
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
+
+def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer):
+    protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
+    networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
+    models = ['OSI','TCP/IP','model']
+    congestioncontrols = ['s-aloha','CSMA','CSMA/CD','CSMA/CA','RED','congestion control general','TCP congestion control','reno',
+                            'tahoe','aloha']
+    topologies = ['topology','centralised','decentralised','federal','overlay','networktopology','symmetric',
+                    'Asymmetric','peer-to-peer','p2pv1','p2pv2','dht','structured peer','unstructured peer']
+    layers = ['physical layer', 'data link layer', 'network layer', 'transport layer', 'session layer', 'presentation layer',
+                'application layer', 'layer', 'internet', 'link', 'osi-layers', 'tcpip-layers','specific layer']
+    networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
+
+    if topo in topologies:
+        return netarchintent(netarch,netcomp,topo,addinfo,info) #add contextname to params and change context accordingly 
+    if cong in congestioncontrols:
+        return congestionintent(cong,info,layer,addinfo)
+    if model in models:
+        return modelintent(model,info,addinfo)
+    if netarch in networkarchs or netcomp in networkcomps:
+        return netarchintent(netarch,netcomp,topo,addinfo,info)
+    if prot in protocols:
+        return protocolintent(prot,info,addinfo,service)
+    if service == "service":
+        serviceintent(service,addinfo,info)
+
+    speech = "I am sorry, but I do not know much about this topic... However, I can ask someone and get back to you, if thats okay 😊"
+
+
+    contextname = "definition_intent" #add reset context for no follow up and change context params to something more useful 
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
 
 def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC']
