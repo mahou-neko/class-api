@@ -198,7 +198,7 @@ def makeYqlQuery(req):
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
-def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong):
+def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC']
     networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
     models = ['OSI','TCP/IP','model']
