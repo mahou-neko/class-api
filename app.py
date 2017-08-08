@@ -1142,6 +1142,7 @@ def layerintentC(layer, info, addinfo, model, contextname):
         speech = model_defs[info]
         #contextname = "layer_model"
         if info == "difference":
+            addinfo = "layerM"
             #contextname = "layer_more" #expand this! and be carful with context -> reset!
     if model == "OSI":
         speech = layermodel['osi-layers'] #reset context
