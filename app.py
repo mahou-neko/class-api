@@ -275,6 +275,8 @@ def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,laye
     models = ['OSI','TCP/IP','model']
     congestioncontrols = ['s-aloha','CSMA','CSMA/CD','CSMA/CA','RED']
 
+    contextname = "acronym_intent"
+
     if topo == "peer-to-peer" or topo == "dht":
         return netarchintent(netarch,netcomp,topo,addinfo,info) #add contextname to params and change context accordingly 
     if cong in congestioncontrols:
@@ -284,7 +286,7 @@ def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,laye
     if netarch in networkarchs:
         return netarchintent(netarch,netcomp,topo,addinfo,info)
     if prot in protocols:
-        return protocolintent(prot,info,addinfo,service)
+        return protocolintent(prot,info,addinfo,service,contextname)
 
     speech = "I am sorry, but I do not know the meaning of this acronym... However, I can ask someone and get back to you, if thats okay 😊"
 
@@ -445,6 +447,199 @@ def netarchintent(netarch,netcomp,topo,addinfo,info):
         "displayText": speech,
         # "data": data,
         "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
+def netarchintentC(netarch,netcomp,topo,addinfo,info,contextname):
+    net_arch_def = {'cloud':'Well clouds are means to deploy massive and mostly transparent distributed networks. The common use resources increases the workload and hence reduces costs. Would you like to hear more about the different types of cloud services?',
+                    'SOA':'Alright! SOA - service oriented architectures- envision to combine reusable services (which could be obtained from different providers) in order to compose a (commercial) application.',
+                    'moreC':'Awesome! 😎 The greatest distinction would be between public and private clouds. Public clouds are mutually used by many users while private ones are just used by one cooperation or even just one person!',
+                    'networktopology':'Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network. Essentially, it is the topological structure of a network and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.',
+                    'distributed system':'A distributed system is a model in which components located on networked computers communicate and coordinate their actions by passing messages. The components interact with each other in order to achieve a common goal. Three significant characteristics of distributed systems are: concurrency of components, lack of a global clock, and independent failure of components. Examples of distributed systems vary from SOA-based systems to massively multiplayer online games to peer-to-peer applications.',
+                    'moreCD':'Public clouds are mutually used by many users while private ones are just used by one cooperation or even just one person!',
+                    'SAAS':'In the software as a service (SaaS) model, users gain access to application software and databases. Cloud providers manage the infrastructure and platforms that run the applications. SaaS is sometimes referred to as "on-demand software" and is usually priced on a pay-per-use basis or using a subscription fee.[86] In the SaaS model, cloud providers install and operate application software in the cloud and cloud users access the software from cloud clients. Cloud users do not manage the cloud infrastructure and platform where the application runs. This eliminates the need to install and run the application on the cloud users own computers, which simplifies maintenance and support. Cloud applications differ from other applications in their scalability—which can be achieved by cloning tasks onto multiple virtual machines at run-time to meet changing work demand. Load balancers distribute the work over the set of virtual machines. This process is transparent to the cloud user, who sees only a single access-point. To accommodate a large number of cloud users, cloud applications can be multitenant, meaning that any machine may serve more than one cloud-user organization.',
+                    'IAAS':'According to the Internet Engineering Task Force (IETF), the most basic cloud-service model is that of providers offering computing infrastructure – virtual machines and other resources – as a service to subscribers. Infrastructure as a service (IaaS) refers to online services that provide high-level APIs used to dereference various low-level details of underlying network infrastructure like physical computing resources, location, data partitioning, scaling, security, backup etc. A hypervisor, such as Xen, Oracle VirtualBox, Oracle VM, KVM, VMware ESX/ESXi, or Hyper-V, LXD, runs the virtual machines as guests. Pools of hypervisors within the cloud operational system can support large numbers of virtual machines and the ability to scale services up and down according to customers varying requirements.',
+                    'PAAS':'PaaS vendors offer a development environment to application developers. The provider typically develops toolkit and standards for development and channels for distribution and payment. In the PaaS models, cloud providers deliver a computing platform, typically including operating system, programming-language execution environment, database, and web server. Application developers can develop and run their software solutions on a cloud platform without the cost and complexity of buying and managing the underlying hardware and software layers. With some PaaS offers like Microsoft Azure and Google App Engine, the underlying computer and storage resources scale automatically to match application demand so that the cloud user does not have to allocate resources manually. The latter has also been proposed by an architecture aiming to facilitate real-time in cloud environments.',
+                    'peer-to-peer':'Peer-to-peer (P2P) computing or networking is a distributed application architecture that partitions tasks or workloads between peers. Peers are equally privileged, equipotent participants in the application. They are said to form a peer-to-peer network of nodes. Would you like to hear more?',
+                    'client-server-d':'For distributed systems with centralised control there are a few network designs which rank between two extremes: thin clients with fat servers (meaning that the client side is less computationally and storage wise exerted) and the exact contrary with a fat client (which does all the heavy lifting) and a thin server.',
+                    'types':'There are centralised, federal and decentralised topologies for distributed systems. Centralised ones are on the end of the asymmetric scale while decentralised ones are more prone to be symmetric.',
+                    'overlay':'So overlays are basically logic networks which reside on top of already existing networks (in those cases called underlays). I could tell you a bit more about them, but only if you want to 😊',
+                    'moreO':'Good choice! 😁 Their topology can differ a lot from the underlays since overlay networks are pretty independent and have their own addresses and routing paths.',
+                    'p2pv1':'Every node of the overlay knows k > 2 other nodes. Data gets flooded over the edges and every node contains every information.',
+                    'network':'A computer network or data network is a digital telecommunications network which allows nodes to share resources. In computer networks, networked computing devices exchange data with each other using a data link. The connections between nodes are established using either cable media or wireless media.',
+                    'client-server':'The client–server model is a distributed application structure that partitions tasks or workloads between the providers of a resource or service, called servers, and service requesters, called clients. Often clients and servers communicate over a computer network on separate hardware, but both client and server may reside in the same system. A server host runs one or more server programs which share their resources with clients. A client does not share any of its resources, but requests a servers content or service function. Clients therefore initiate communication sessions with servers which await incoming requests. Examples of computer applications that use the client–server model are Email, network printing, and the World Wide Web.',
+                    'client':'A client is a piece of computer hardware or software that accesses a service made available by a server. The server is often (but not always) on another computer system, in which case the client accesses the service by way of a network. The term applies to the role that programs or devices play in the client–server model.',
+                    'nodes':'Network computer devices that originate, route and terminate the data are called network nodes. Nodes can include hosts such as personal computers, phones, servers as well as networking hardware. Two such devices can be said to be networked together when one device is able to exchange information with the other device, whether or not they have a direct connection to each other. In most cases, application-specific communications protocols are layered (i.e. carried as payload) over other more general communications protocols. This formidable collection of information technology requires skilled network management to keep it all running reliably.',
+                    'server':'In computing, a server is a computer program or a device that provides functionality for other programs or devices, called "clients". This architecture is called the client–server model, and a single overall computation is distributed across multiple processes or devices. Servers can provide various functionalities, often called "services", such as sharing data or resources among multiple clients, or performing computation for a client. A single server can serve multiple clients, and a single client can use multiple servers. A client process may run on the same device or may connect over a network to a server on a different device. Typical servers are database servers, file servers, mail servers, print servers, web servers, game servers, and application servers.',
+                    'p2pv2':'Every node contains only a small fraction of the data. Hence rare content is hard to find. This type of p2p is usually deployed via directory servers or flooding with backtracking.',
+                    'dht':'Distributed Hash-Tables are a structured p2p overlay and utilizes a dynamic number of nodes. I realizes a cyclic data space and since every node knows the address of its logical successor, the complexity of searches is reduced to O(n).',
+                    'unstructured peer':'Unstructured peer-to-peer networks do not impose a particular structure on the overlay network by design, but rather are formed by nodes that randomly form connections to each other.',
+                    'structured peer':'In structured peer-to-peer networks the overlay is organized into a specific topology, and the protocol ensures that any node can efficiently search the network for a file/resource, even if the resource is extremely rare.'}
+    #define SOA, cloud, SAAS, IAAS, PAAS, client-server, distributed system - network arch
+    #define network, client, server, thin client, thin server, fat server, fat client - network components
+    #define topology, centralised, decentralised, federal, overlay, networktopology, symmetric, asymmetric, peer-to-peer, p2pv1, p2pv2
+    #structured peer, unstructured peer - topologies
+    #and further
+    net_arch_acro = {'SOA':'SOA = Service Oriented Architectures',
+                        'SAAS':'SAAS = Software AS A Service',
+                        'IAAS':'IAAS = Infrastructure As A Service',
+                        'PAAS':'PAAS = Platform AS A Service'}
+    synonyms_client_server = ["fat server","thin server","thin client","fat client"]
+    synonyms_topo = {"federal","symmetric","Asymmetric","centralised","decentralised"}
+    net_arch_coll = ["SAAS","IAAS","SOA","PAAS"]
+
+    if topo == "topology":
+        topo = "networktopology"
+    if netcomp in synonyms_client_server or (netarch == "client-server" and info == "types"): #find better solution
+        netcomp = "client-server-d"
+    if topo in synonyms_topo:
+        info = "types"
+    if topo == "p2p":
+        topo = "peer-to-peer"
+
+    if netarch in net_arch_def:
+        speech = net_arch_def[netarch]
+    if addinfo == "moreC":
+        speech = net_arch_def[addinfo]
+    if netcomp in net_arch_def:
+        speech = net_arch_def[netcomp]
+    if topo in net_arch_def:
+        speech = net_arch_def[topo]
+
+    if addinfo == "moreA" and netarch in net_arch_def:
+        speech = net_arch_def[netarch]
+        #contextname = "netarch_conversation"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+    if addinfo == "moreO" or addinfo == "moreC":
+        speech = net_arch_def[addinfo]
+        addinfo = "more"
+        #contextname = "netarch_conversation"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+
+    if info == "types" and netarch != "client-server": #more sophisticated
+        speech = net_arch_def[info]
+    if info == "acronym" and netarch in net_arch_coll:
+        speech = net_arch_acro[netarch] + " Would you like to know more about " + netarch + " ?😊"
+        info = "more"
+        addinfo = "moreA"
+    #check for more in order to get full explanation
+    if info == "difference" or info == "types" and netarch == "cloud":
+        speech = net_arch_def['moreCD']
+
+    if netarch == "cloud":
+        addinfo = "moreC"
+    if topo == "overlay":
+        addinfo = "moreO"
+    if topo == "peer-to-peer" and addinfo == "moreP":
+        speech = "Cool! 😎 Would you like to hear about structured or unstructured peer-to-peer networks?"
+    if topo == "peer-to-peer":
+        addinfo = "moreP"
+
+    #contextname = "netarch_conversation"
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
+def protocolintentC(prot,info,addinfo,service,contextname):
+    protocol_defs = {'protocol':'Protocols are sets of rules which give structure and meaning to exchanged messages. They are deployed for implementing Services and are usually not distinguishable for users. Would you like to know something about services?',
+                    'TCP':'The Transmission Control Protocol (TCP) is one of the main protocols of the Internet protocol suite. It originated in the initial network implementation in which it complemented the Internet Protocol (IP). Therefore, the entire suite is commonly referred to as TCP/IP. TCP provides reliable, ordered, and error-checked delivery of a stream of octets between applications running on hosts communicating by an IP network. Major Internet applications such as the World Wide Web, email, remote administration, and file transfer rely on TCP.',
+                    'HTTP':'The Hypertext Transfer Protocol (HTTP) is an application protocol for distributed, collaborative, and hypermedia information systems. HTTP is the foundation of data communication for the World Wide Web. Hypertext is structured text that uses logical links (hyperlinks) between nodes containing text. HTTP is the protocol to exchange or transfer hypertext.',
+                    'SMTP':'Simple Mail Transfer Protocol (SMTP) is an Internet standard for electronic mail (email) transmission. Although electronic mail servers and other mail transfer agents use SMTP to send and receive mail messages, user-level client mail applications typically use SMTP only for sending messages to a mail server for relaying. For retrieving messages, client applications usually use either IMAP or POP3.',
+                    'IMAP':'In computing, the Internet Message Access Protocol (IMAP) is an Internet standard protocol used by e-mail clients to retrieve e-mail messages from a mail server over a TCP/IP connection. IMAP was designed with the goal of permitting complete management of an email box by multiple email clients, therefore clients generally leave messages on the server until the user explicitly deletes them.',
+                    'DNS':'The Domain Name System (DNS) is a hierarchical decentralized naming system for computers, services, or other resources connected to the Internet or a private network. It associates various information with domain names assigned to each of the participating entities. Most prominently, it translates more readily memorized domain names to the numerical IP addresses needed for locating and identifying computer services and devices with the underlying network protocols. By providing a worldwide, distributed directory service, the Domain Name System is an essential component of the functionality on the Internet, that has been in use since 1985.',
+                    'SIP':'The Session Initiation Protocol (SIP) is a communications protocol for signaling and controlling multimedia communication sessions in applications of Internet telephony for voice and video calls, in private IP telephone systems, as well as in instant messaging over Internet Protocol (IP) networks. SIP works in conjunction with several other protocols that specify and carry the session media. Media type and parameter negotiation and media setup is performed with the Session Description Protocol (SDP), which is carried as payload in SIP messages. For the transmission of media streams (voice, video) SIP typically employs the Real-time Transport Protocol (RTP) or the Secure Real-time Transport Protocol (SRTP).',
+                    'RTP':'The Real-time Transport Protocol (RTP) is a network protocol for delivering audio and video over IP networks. RTP is used extensively in communication and entertainment systems that involve streaming media, such as telephony, video teleconference applications, television services and web-based push-to-talk features. RTP typically runs over User Datagram Protocol (UDP). RTP is used in conjunction with the RTP Control Protocol (RTCP). While RTP carries the media streams (e.g., audio and video), RTCP is used to monitor transmission statistics and quality of service (QoS) and aids synchronization of multiple streams. RTP is one of the technical foundations of Voice over IP and in this context is often used in conjunction with a signaling protocol such as the Session Initiation Protocol (SIP) which establishes connections across the network.',
+                    'HTML':'Hypertext Markup Language (HTML) is the standard markup language for creating web pages and web applications. With Cascading Style Sheets (CSS) and JavaScript it forms a triad of cornerstone technologies for the World Wide Web. Web browsers receive HTML documents from a webserver or from local storage and render them into multimedia web pages. HTML describes the structure of a web page semantically and originally included cues for the appearance of the document.',
+                    'IP':'The Internet Protocol (IP) is the principal communications protocol in the Internet protocol suite for relaying datagrams across network boundaries. Its routing function enables internetworking, and essentially establishes the Internet. IP has the task of delivering packets from the source host to the destination host solely based on the IP addresses in the packet headers. For this purpose, IP defines packet structures that encapsulate the data to be delivered. It also defines addressing methods that are used to label the datagram with source and destination information.',
+                    'UDP':'In electronic communication, the User Datagram Protocol (UDP) is one of the core members of the Internet protocol suite. With UDP, computer applications can send messages, in this case referred to as datagrams, to other hosts on an Internet Protocol (IP) network. Prior communications are not required in order to set up transmission channels or data paths. UDP uses a simple connectionless transmission model with a minimum of protocol mechanism. UDP provides checksums for data integrity, and port numbers for addressing different functions at the source and destination of the datagram. It has no handshaking dialogues, and thus exposes the users program to any unreliability of the underlying network: there is no guarantee of delivery, ordering, or duplicate protection',
+                    'RPC':'n distributed computing, a remote procedure call (RPC) is when a computer program causes a procedure (subroutine) to execute in a different address space (commonly on another computer on a shared network), which is coded as if it were a normal (local) procedure call, without the programmer explicitly coding the details for the remote interaction. That is, the programmer writes essentially the same code whether the subroutine is local to the executing program, or remote. This is a form of client–server interaction (caller is client, executor is server), typically implemented via a request–response message-passing system.'
+                    }
+    prot_acro = {'TCP':'TCP = Transmission Control Protocol',
+                'HTTP':'HTTP = Hyper Text Transfer Protocol',
+                'SMTP':'SMTP = Simple Mail Transport Protocol',
+                'IMAP':'IMAP = Internet Message Access Protocol',
+                'DNS':'DNS = Domain Name System',
+                'SIP':'SIP = Session Initiation Protocol',
+                'RTP':'RTP = Real-time Transport Protocol',
+                'HTML':'HTML = Hypertext Markup Language',
+                'IP':'IP = Internet Protocol',
+                'UDP':'UDP = User Datagram Protocol',
+                'protocol':'Protocols are sets of rules which give structure and meaning to exchanged messages. They are deployed for implementing Services and are usually not distinguishable for users. Would you like to know something about services?',
+                'RPC':'RPC = Remote Procedure Call'
+                }
+    prot_diff = {'IP':'The main differences between IPv4 and IPv6 consist of the checksum, the header length, fragmentation handeling and no header options for IPv6.',
+                'TCP':'There are two types of Internet Protocol (IP) traffic. They are TCP or Transmission Control Protocol and UDP or User Datagram Protocol. TCP is connection oriented – once a connection is established, data can be sent bidirectional. UDP is a simpler, connectionless Internet protocol.',
+                'UDP':'There are two types of Internet Protocol (IP) traffic. They are TCP or Transmission Control Protocol and UDP or User Datagram Protocol. TCP is connection oriented – once a connection is established, data can be sent bidirectional. UDP is a simpler, connectionless Internet protocol.'}
+
+    #info = "more"
+    if service == "service":
+        return serviceintent(service, addinfo, info)
+    if addinfo == "moreAcro":
+        speech = protocol_defs[prot]
+        addinfo = "moreSpecific"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+        }
+    if addinfo == "moreSpecific":
+        speech = "I can tell you about advantages, issues, alternatives and differences of protocols. What would you like to know more about?"
+        if prot == "protocol":
+            speech = "Which protocol would you like to hear more about?"
+        addinfo = "more"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+        }
+    if info == "acronym":
+        if prot in prot_acro:
+            speech = prot_acro[prot] + " Would you like to hear more? 😊"
+            addinfo = "moreAcro" #reset info maybe
+        else:
+            speech = "That's ebarassing... I am not sure about this acronym... But I can ask someone who'll know and get back to you if you'd like!"
+    elif prot in protocol_defs:
+        speech = protocol_defs[prot] + " Would you like to know something specific about " + prot + " ? 😊"
+        addinfo = "moreSpecific"
+    else:
+        speech = "I am terribly sorry, but I am not sure about this protocol... I could ask someone about it and get back to you - if that's okay 😊"
+
+    #change advantages, issues, alternatives to dic. here
+    if info == "advantages" and prot in prot_acro:
+        speech = prot_advantages(prot)
+    if info == "issues" and prot in prot_acro:
+        speech = prot_disadvantages(prot)
+    if info == "alternatives" and prot in prot_acro:
+        speech = prot_alternatives(prot)
+    if info == "difference" and prot in prot_diff:
+        speech = prot_diff[prot]
+
+    #addinfo = "more" 
+    #handle even furhter information etc
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"protocols":prot,"info":info,"addInfo":addinfo}}],
         "source": "apiai-weather-webhook-sample"
     }
 
