@@ -1021,6 +1021,7 @@ def modelintentC(model,info,addinfo,contextname):
             "source": "apiai-weather-webhook-sample"
             }
     if info == "more":
+        contextname = "definition_conversation"
         if model == "TCP/IP": #set different context
             return layerintentC("tcpip-layers","general"," "," ",contextname) #reset models followup for it to work with layers
         elif model == "OSI":
