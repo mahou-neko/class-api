@@ -1135,6 +1135,7 @@ def layerintentC(layer, info, addinfo, model, contextname):
     elif layer in layermodel:
         speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
         #contextname = "layer_model"
+        addinfo = "more"
     else:
         return {"followupEvent":{"name":"fallback_trigger","data":{" ":" "}}}
         #speech = "I am sorry, but I don't know about the " + layer + ". Shall I ask someone and get back to you once I know more?" 
