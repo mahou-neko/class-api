@@ -240,6 +240,8 @@ def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,l
                 'application layer', 'layer', 'internet', 'link', 'osi-layers', 'tcpip-layers','specific layer']
     networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
 
+    contextname = "definition_conversation"
+
     if topo in topologies:
         return netarchintent(netarch,netcomp,topo,addinfo,info) #add contextname to params and change context accordingly 
     if cong in congestioncontrols:
@@ -259,7 +261,8 @@ def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,l
     speech = "I am sorry, but I do not know much about this topic... However, I can ask someone and get back to you, if thats okay 😊"
 
 
-    contextname = "definition_intent" #add reset context for no follow up and change context params to something more useful 
+    #contextname = "definition_intent" 
+    #add reset context for no follow up and change context params to something more useful 
 
     return {
         "speech": speech,
@@ -278,11 +281,11 @@ def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,laye
     contextname = "acronym_conversation"
 
     if topo == "peer-to-peer" or topo == "dht":
-        return netarchintent(netarch,netcomp,topo,addinfo,info) #add contextname to params and change context accordingly 
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname) #add contextname to params and change context accordingly 
     if cong in congestioncontrols:
-        return congestionintent(cong,info,layer,addinfo)
+        return congestionintentC(cong,info,layer,addinfo,contextname)
     if model in models:
-        return modelintent(model,info,addinfo)
+        return modelintentC(model,info,addinfo,contextname)
     if netarch in networkarchs:
         return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname)
     if prot in protocols:
@@ -771,6 +774,40 @@ def serviceintent(service, addinfo, info):
         "source": "apiai-weather-webhook-sample"
     }
 
+def serviceintentC(service, addinfo, info, contextname):
+    service_def = {'service':'Alright 😊 Services are a set of available functions. The details of those function, however, is hidden from higher layers. Would you like to hear more about layers or a specific service?',
+                    'SOA':'Alright! SOA - service oriented architectures- envision to combine reusable services (which could be obtained from different providers) in order to compose a (commercial) application.'}
+    #could add case for layers and specific services and expand with hear more
+
+    if service in service_def and addinfo != "more":
+        speech = service_def[service]
+
+    if addinfo == "more" and service == "service":
+        speech = "Which service or which layer would you like to know more about? 😊"
+        #contextname = "service_conversation"
+        addinfo = ""
+        info = "more"
+        return {
+            "speech": speech,
+            "displayText": speech,
+            # "data": data,
+            "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"service":service,"info":info,"addInfo":addinfo}}],
+            "source": "apiai-weather-webhook-sample"
+        }
+    #for specific information as well
+
+    info = "more"
+    addinfo = "more"
+    #contextname = "service_conversation"
+    
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"service":service,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
 def congestionintent(cong,info,layer,addinfo):
     #more elaborate on methods
     cong_defs = {'congestion control general':'Congestion Control is handled by layer 2 and 4 of the OSI model. Which layer are you interested in the most?',
@@ -817,6 +854,62 @@ def congestionintent(cong,info,layer,addinfo):
         #speech = "Sorry... I guess this topic slipped my mind... I can ask someone who'll know more if you'd like me too!"
 
     contextname = "congestion_conversation"
+    #addinfo = "moreRed" expand to other answers
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"congestion_control":cong,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
+def congestionintentC(cong,info,layer,addinfo,contextname):
+    #more elaborate on methods
+    cong_defs = {'congestion control general':'Congestion Control is handled by layer 2 and 4 of the OSI model. Which layer are you interested in the most?',
+                    'data link layer':'Alright! Layer 2 - the data link layer -  it is! 😊 Congestion Control on the second layer deals with media access control by avoiding, detecting and resolving collisions. Would you like to know more about that?',
+                    'more2':'Got it! 😎 On the data link layer congestion control is deployed via ALOHA, S-ALOHA and CSMA/CD as well as CSMA/CA. Would you like to hear more?',
+                    'more22':'Great! Which access method would you like to learn more about?',
+                    'more44':'Cool! 😎 Would like to hear more about Reno or Tahoe or rather something about tcp congestion control?',
+                    'moreCG':'Awesome! 😊 Would you like to hear more about layer 2 or layer 4 congestion control?',
+                    'types' : 'On the data link layer congestion control is deployed via ALOHA, S-ALOHA and CSMA/CD as well as CSMA/CA. Methods for congestion avoidance rank from slower (preventive) to fast (reactive) approaches. From preventive to reactive those approaches would be: expanding -  redirecting - access control - choking - rejecting. The  most commonly used congestion control methods are Reno and Tahoe in combination with TCP.',
+                    'moreRed':'In the conventional tail drop algorithm, a router or other network component buffers as many packets as it can, and simply drops the ones it cannot buffer. If buffers are constantly full, the network is congested. Tail drop distributes buffer space unfairly among traffic flows. Tail drop can also lead to TCP global synchronization as all TCP connections "hold back" simultaneously, and then step forward simultaneously. Networks become under-utilized and flooded by turns. RED addresses these issues.',
+                    'transport layer':'Okay, Congestion control for the transport layer! 😎 Congestion control on the transport layer handels end-to-end congestion control. Would you like to hear more about it?',
+                    'more4':'Methods for congestion avoidance rank from slower (preventive) to fast (reactive) approaches. From preventive to reactive those approaches would be: expanding -  redirecting - access control - choking - rejecting. The  most commonly used congestion control methods are Reno and Tahoe in combination with TCP. Would you be interested to hear more?'}
+    con_methods = {'aloha':'The first version of the protocol was quite simple: If you have data to send, send the data - If, while you are transmitting data, you receive any data from another station, there has been a message collision. All transmitting stations will need to try resending "later". Note that the first step implies that Pure ALOHA does not check whether the channel is busy before transmitting. Since collisions can occur and data may have to be sent again, ALOHA cannot use 100 percent of the capacity of the communications channel. How long a station waits until it transmits, and the likelihood a collision occurs are interrelated, and both affect how efficiently the channel can be used.',
+                    's-aloha':'An improvement to the original ALOHA protocol was "Slotted ALOHA", which introduced discrete timeslots and increased the maximum throughput. A station can start a transmission only at the beginning of a timeslot, and thus collisions are reduced. In this case, only transmission-attempts within 1 frame-time and not 2 consecutive frame-times need to be considered, since collisions can only occur during each timeslot.',
+                    'CSMA':'Carrier-sense multiple access (CSMA) is a media access control (MAC) protocol in which a node verifies the absence of other traffic before transmitting on a shared transmission medium. A transmitter attempts to determine whether another transmission is in progress before initiating a transmission using a carrier-sense mechanism. That is, it tries to detect the presence of a carrier signal from another node before attempting to transmit.',
+                    'CSMA/CD':'CSMA/CD is used to improve CSMA performance by terminating transmission as soon as a collision is detected, thus shortening the time required before a retry can be attempted.',
+                    'CSMA/CA':'In CSMA/CA collision avoidance is used to improve the performance of CSMA. If the transmission medium is sensed busy before transmission, then the transmission is deferred for a random interval. This random interval reduces the likelihood that two or more nodes waiting to transmit will simultaneously begin transmission upon termination of the detected transmission, thus reducing the incidence of collision.',
+                    'reno':'If three duplicate ACKs are received, Reno will perform a fast retransmit and skip the slow start phase (which is part of Tahoe s procedure) by instead halving the congestion window (instead of setting it to 1 MSS like Tahoe), setting the slow start threshold equal to the new congestion window, and enter a phase called Fast Recovery.',
+                    'tahoe':'If three duplicate ACKs are received, Tahoe performs a fast retransmit, sets the slow start threshold to half of the current congestion window, reduces the congestion window to 1 MSS, and resets to slow start state',
+                    'TCP congestion control':'Congestion control via TCP is deployed either with Reno or Tahoe. Whenever duplicate ACKs are received either a slow start or a fast recovery is performed',
+                    'RED':'Random Early Detection is a queueing discipline for a network scheduler suited for congestion avoidance. Do you want to know more?',
+                    'congestion control general':'Alright 😎 Network Congestion is the reduced quality of service that occurs when a network node is carrying more data than it can handle. Typical effects include queueing delay, packet loss or the blocking of new connections. A consequence of congestion is that an incremental increase in offered load leads either only to a small increase or even a decrease in network throughput. Congestion control tries to combat this issue. Layer 2 and 4 of the OSI model are concerned with congestion control. Would you like to know more?'}
+    if addinfo in cong_defs:
+        speech = cong_defs[addinfo]
+        if addinfo == "more2":
+            addinfo = "more22"
+        if addinfo == "more4":
+            addinfo = "more44"
+    if cong in con_methods:
+        speech = con_methods[cong]
+        if cong == "congestion control general":
+            addinfo = "moreCG"
+        if cong == "RED":
+            addinfo = "moreRed"
+    if info in cong_defs:
+        speech = cong_defs[info]
+    if layer in cong_defs:
+        speech = cong_defs[layer]
+        if layer == "data link layer":
+            addinfo = "more2"
+        if layer == "transport layer":
+            addinfo = "more4"
+    #else:
+        #speech = "Sorry... I guess this topic slipped my mind... I can ask someone who'll know more if you'd like me too!"
+
+    #contextname = "congestion_conversation"
     #addinfo = "moreRed" expand to other answers
 
     return {
@@ -898,6 +991,54 @@ def modelintent(model,info,addinfo):
         "source": "apiai-weather-webhook-sample"
     }
 
+def modelintentC(model,info,addinfo,contextname):
+    model_defs = {'TCP/IP':'Alright 😊 The Internet protocol suite provides end-to-end data communication specifying how data should be packetized, addressed, transmitted, routed and received. This functionality is organized into four abstraction layers which are used to sort all related protocols according to the scope of networking involved.',
+                    'OSI':'Got cha! 😎 The Open Systems Interconnection model (OSI model) is a conceptual model that characterizes and standardizes the communication functions of a telecommunication or computing system without regard to their underlying internal structure and technology. Its goal is the interoperability of diverse communication systems with standard protocols. The model partitions a communication system into abstraction layers. The original version of the model defined seven layers.',
+                    'model':'There are two types of conceptual models which are used on the Internet and similar comupter networks to facilitate communication and offer services. One would be the TCP/IP model and the other would be the OSI model. 😊',
+                    'difference':'When it comes to general reliability, TCP/IP is considered to be a more reliable option as opposed to OSI model. The OSI model is, in most cases, referred to as a reference tool, being the older of the two models. OSI is also known for its strict protocol and boundaries. This is not the case with TCP/IP. It allows for a loosening of the rules, provided the general guidelines are met. Would you like to hear more?',
+                    'moreD':'When it comes to the communications, TCP/IP supports only connectionless communication emanating from the network layer. OSI, on the other hand, seems to do quite well, supporting both connectionless and connection-oriented communication within the network layer. Last but not least is the protocol dependency of the two. TCP/IP is a protocol dependent model, whereas OSI is a protocol independent standard.'}
+                    #fix moreD!
+    if model in model_defs:
+        speech = model_defs[model]
+    else:
+        speech = "I am terribly sorry... but I am not sure about the " + model + "model... Would you like me to ask someone and get back to you? 😊"
+
+    if model != "model": #could be expanded to specific model questions and more about one model
+        speech = speech + " Shall I tell you more about the layers of the " + model + " model 😊?"
+    else:
+        speech = speech + " Would you like to hear more about one of them? 😊"
+
+    #contextname = "model_conversation"
+
+    #own speech return might be better!
+    if addinfo == "moreD":
+        speech = model_defs[addinfo] #just in model_defs[info] would be cleaner - also use addintional info for more extraction
+        return {
+            "speech": speech,
+            "displayText": speech,
+            # "data": data,
+            "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Models":model,"info":info,"addInfo":addinfo}}],
+            "source": "apiai-weather-webhook-sample"
+            }
+    if info == "more":
+        if model == "TCP/IP": #set different context
+            return layerintent("tcpip-layers","general"," "," ") #reset models followup for it to work with layers
+        elif model == "OSI":
+            return layerintent("osi-layers","general"," "," ")
+        elif model == "model":
+            speech = "Which one would you like to hear more about? 😎"
+    if info == "difference":
+        speech = model_defs[info] #define own return here with layer contexts
+        addinfo = "moreD"
+    #info = "more"
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Models":model,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
 def layerintent(layer, info, addinfo, model):
     layerdef = {'physical layer':'The physical layer handels mechanical and electrical/optical linkage. It converts logical symbols into electrical(optical) ones and measures optical signals to reconstruct logical symbols', 
     'data link layer':'Got it! ☺️ The data link layer covers transmission errors and handels media access. \n It is also concerned with congestion control.', 
@@ -940,6 +1081,68 @@ def layerintent(layer, info, addinfo, model):
         contextname = "layer_model"
         if info == "difference":
             contextname = "layer_more" #expand this! and be carful with context -> reset!
+    if model == "OSI":
+        speech = layermodel['osi-layers'] #reset context
+        model = " "
+    if model == "TCP/IP":
+        speech = layermodel['tcpip-layers']
+        model = " "
+
+    addinfo = "more"
+    if info == "more":
+        speech = "Okay! Here comes more about the " + layer + " 😎"
+        #could set context here for spevific more for looping information
+        #should be in its own more function
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"info":info,"addInfo":addinfo,"Models":model}},{"name":"Layer-followup","lifespan":3,"parameters":{}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
+def layerintentC(layer, info, addinfo, model, contextname):
+    layerdef = {'physical layer':'The physical layer handels mechanical and electrical/optical linkage. It converts logical symbols into electrical(optical) ones and measures optical signals to reconstruct logical symbols', 
+    'data link layer':'Got it! ☺️ The data link layer covers transmission errors and handels media access. \n It is also concerned with congestion control.', 
+    'network layer':'On the network layer paths from senders to recipients are chosen. Hence this layer also has to cope with heterogenius subnets and is responsibe for accounting.',
+    'transport layer':'The transport layer offers secure end-to-end-communication between processes. Therefore it is also in charge for data stream control between endsystems. A few concerns of this layer are multiplexing, segmentation and acknowledgements in order to provide reliable transmission.',
+    'session layer':'The name of this layer almost gives all its functionalities away! It mostly deals with communication managment, dialog control and synchronization.',
+    'presentation layer':'Converting between dataformats, compression and decrompession as well as encryption are the main converns of the presentation layer.',
+    'application layer':'Its name almost tells it all. The application layer handels communication between applications and deals with application specific services like e-mail, telnet etc.',
+    'layer':'Alright! Layers basically are subdivisions of communication models. A Layer basically is a collection of similar functions that provide services to the layer above it and receives services from the layer below it.',
+    'internet':'The internet layer has the same responsabilites as the third layer of the OSI model (which would be the network layer).',
+    'link':'The link layer corresponds to the OSI model layers 1 and 2 (physical layer and data link layer).',
+    'layer':'Alright layer general it is! Layers are a way of sub-dividing a communications system further into smaller parts called layers. A layer is a collection of similar functions that provide services to the layer above it and receives services from the layer below it. On each layer, an instance provides services to the instances at the layer above and requests service from the layer below. They can be subsumed to models like the OSI or TCP/IP model.'}
+
+    layermodel = {'osi-layers':'The layers of the OSI model are (from lowest level to highest) - 1 physical layer - 2 data link layer - 3 network layer - 4 transport layer - 5 session layer - 6 presentation layer - 7 application layer. Would you like to know more about a specific layer?',
+                    'tcpip-layers':'There are 4 layers in the TCP/IP model. Those would be (from lowest to highest) - 1 Link - 2 Internet - 3 Transport - 4 Application. Would you like to hear more about a specific layer?'}
+
+    #fix more and correct defs (not best placement/usefullness)
+    model_defs = {'types':'There are 7 layers in the OSI model and 4 in the TCP/IP model. Which one would you like to learn more about?',
+                    'difference':'When it comes to general reliability, TCP/IP is considered to be a more reliable option as opposed to OSI model. The OSI model is, in most cases, referred to as a reference tool, being the older of the two models. OSI is also known for its strict protocol and boundaries. This is not the case with TCP/IP. It allows for a loosening of the rules, provided the general guidelines are met. Would you like to hear more?',
+                    'more':'When it comes to the communications, TCP/IP supports only connectionless communication emanating from the network layer. OSI, on the other hand, seems to do quite well, supporting both connectionless and connection-oriented communication within the network layer. Last but not least is the protocol dependency of the two. TCP/IP is a protocol dependent model, whereas OSI is a protocol independent standard.'}
+
+    if layer in layerdef:
+        speech = layerdef[layer] + " Would you like to hear more? ☺️" 
+        if layer == "layer" and addinfo == "more":
+            speech = "Great! Would you like to hear more about osi layers or tcp/ip layers?"
+            addinfo = ""
+        if addinfo == "more" and layer != "layer":
+            speech = "Awesome ☺️ What would you like to know more about the " + layer +"?"
+
+        #contextname = "layer_conversation"
+    elif layer in layermodel:
+        speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
+        #contextname = "layer_model"
+    else:
+        return {"followupEvent":{"name":"fallback_trigger","data":{" ":" "}}}
+        #speech = "I am sorry, but I don't know about the " + layer + ". Shall I ask someone and get back to you once I know more?" 
+        #contextname = "ask_help"
+    if info in model_defs:
+        speech = model_defs[info]
+        #contextname = "layer_model"
+        if info == "difference":
+            #contextname = "layer_more" #expand this! and be carful with context -> reset!
     if model == "OSI":
         speech = layermodel['osi-layers'] #reset context
         model = " "
