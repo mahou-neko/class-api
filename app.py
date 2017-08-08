@@ -1136,6 +1136,7 @@ def layerintentC(layer, info, addinfo, model, contextname):
         #contextname = "layer_conversation"
     elif layer in layermodel:
         speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
+        layer = "layer"
         #contextname = "layer_model"
         #addinfo = "more"
     else:
@@ -1166,7 +1167,7 @@ def layerintentC(layer, info, addinfo, model, contextname):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"info":info,"addInfo":addinfo,"Models":model}},{"name":"Layer-followup","lifespan":3,"parameters":{}}],
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"info":info,"addInfo":addinfo,"Models":model}}],
         "source": "apiai-weather-webhook-sample"
     }
 
