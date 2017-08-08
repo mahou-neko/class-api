@@ -275,7 +275,7 @@ def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,laye
     models = ['OSI','TCP/IP','model']
     congestioncontrols = ['s-aloha','CSMA','CSMA/CD','CSMA/CA','RED']
 
-    contextname = "acronym_intent"
+    contextname = "acronym_conversation"
 
     if topo == "peer-to-peer" or topo == "dht":
         return netarchintent(netarch,netcomp,topo,addinfo,info) #add contextname to params and change context accordingly 
@@ -284,9 +284,9 @@ def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,laye
     if model in models:
         return modelintent(model,info,addinfo)
     if netarch in networkarchs:
-        return netarchintent(netarch,netcomp,topo,addinfo,info)
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname)
     if prot in protocols:
-        return protocolintent(prot,info,addinfo,service,contextname)
+        return protocolintentC(prot,info,addinfo,service,contextname)
 
     speech = "I am sorry, but I do not know the meaning of this acronym... However, I can ask someone and get back to you, if thats okay 😊"
 
