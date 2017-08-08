@@ -243,20 +243,20 @@ def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,l
     contextname = "definition_conversation"
 
     if topo in topologies:
-        return netarchintent(netarch,netcomp,topo,addinfo,info) #add contextname to params and change context accordingly 
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname) #add contextname to params and change context accordingly 
     if cong in congestioncontrols:
-        return congestionintent(cong,info,layer,addinfo)
+        return congestionintentC(cong,info,layer,addinfo,contextname)
     if layer in layers:
-        return layerintent(layer,info,addinfo,model)
+        return layerintentC(layer,info,addinfo,model,contextname)
     if model in models:
-        return modelintent(model,info,addinfo)
+        return modelintentC(model,info,addinfo,contextname)
     if netarch in networkarchs or netcomp in networkcomps:
-        return netarchintent(netarch,netcomp,topo,addinfo,info)
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname)
     if prot in protocols:
-        return protocolintent(prot,info,addinfo,service)
+        return protocolintentC(prot,info,addinfo,service,contextname)
 
     if service == "service":
-        serviceintent(service,addinfo,info)
+        serviceintentC(service,addinfo,info,contextname)
 
     speech = "I am sorry, but I do not know much about this topic... However, I can ask someone and get back to you, if thats okay 😊"
 
