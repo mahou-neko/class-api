@@ -1151,9 +1151,11 @@ def layerintentC(layer, info, addinfo, model, contextname):
     if model == "OSI":
         speech = layermodel['osi-layers'] #reset context
         model = " "
+        layer = "layer"
     if model == "TCP/IP":
         speech = layermodel['tcpip-layers']
         model = " "
+        layer = "layer"
 
     addinfo = "more"
     if info == "more":
