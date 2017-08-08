@@ -1009,7 +1009,7 @@ def modelintentC(model,info,addinfo,contextname):
         speech = speech + " Would you like to hear more about one of them? 😊"
 
     #contextname = "model_conversation"
-
+    contextname = "acronym_conversation"
     #own speech return might be better!
     if addinfo == "moreD":
         speech = model_defs[addinfo] #just in model_defs[info] would be cleaner - also use addintional info for more extraction
@@ -1021,7 +1021,7 @@ def modelintentC(model,info,addinfo,contextname):
             "source": "apiai-weather-webhook-sample"
             }
     if info == "more":
-        contextname = "definition_conversation"
+        contextname = "acronym_conversation"
         if model == "TCP/IP": #set different context
             return layerintentC("tcpip-layers","general"," "," ",contextname) #reset models followup for it to work with layers
         elif model == "OSI":
