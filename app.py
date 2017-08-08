@@ -1009,7 +1009,7 @@ def modelintentC(model,info,addinfo,contextname):
         speech = speech + " Would you like to hear more about one of them? 😊"
 
     #contextname = "model_conversation"
-    contextname = "acronym_conversation"
+    contextname = "definition_conversation"
     #own speech return might be better!
     if addinfo == "moreD":
         speech = model_defs[addinfo] #just in model_defs[info] would be cleaner - also use addintional info for more extraction
@@ -1021,7 +1021,7 @@ def modelintentC(model,info,addinfo,contextname):
             "source": "apiai-weather-webhook-sample"
             }
     if info == "more":
-        contextname = "acronym_conversation"
+        #contextname = "acronym_conversation"
         if model == "TCP/IP": #set different context
             return layerintentC("tcpip-layers","general"," "," ",contextname) #reset models followup for it to work with layers
         elif model == "OSI":
@@ -1135,7 +1135,7 @@ def layerintentC(layer, info, addinfo, model, contextname):
     elif layer in layermodel:
         speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
         #contextname = "layer_model"
-        addinfo = "more"
+        #addinfo = "more"
     else:
         return {"followupEvent":{"name":"fallback_trigger","data":{" ":" "}}}
         #speech = "I am sorry, but I don't know about the " + layer + ". Shall I ask someone and get back to you once I know more?" 
