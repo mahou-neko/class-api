@@ -288,7 +288,7 @@ def explanationintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"Models":model,"congestion_control":cong,"Information":info,"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
         "source": "apiai-weather-webhook-sample"
     }
 
