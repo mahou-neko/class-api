@@ -247,6 +247,53 @@ def makeYqlQuery(req):
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
+def explanationintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
+    protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
+    networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
+    models = ['OSI','TCP/IP','model']
+    congestioncontrols = ['s-aloha','CSMA','CSMA/CD','CSMA/CA','RED','congestion control general','TCP congestion control','reno',
+                            'tahoe','aloha']
+    topologies = ['topology','centralised','decentralised','federal','overlay','networktopology','symmetric',
+                    'Asymmetric','peer-to-peer','p2pv1','p2pv2','dht','structured peer','unstructured peer']
+    layers = ['physical layer', 'data link layer', 'network layer', 'transport layer', 'session layer', 'presentation layer',
+                'application layer', 'layer', 'internet', 'link', 'osi-layers', 'tcpip-layers','specific layer']
+    networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
+
+    contextname = "definition_conversation"
+    addinfo = "expl"
+
+    if topo in topologies:
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname) #add contextname to params and change context accordingly 
+    if cong in congestioncontrols:
+        return congestionintentC(cong,info,layer,addinfo,contextname)
+    if layer in layers:
+        return layerintentC(layer,info,addinfo,model,contextname,newInf)
+    if model in models:
+        return modelintentC(model,info,addinfo,contextname,newInf)
+    if netarch in networkarchs or netcomp in networkcomps:
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname)
+    if prot in protocols:
+        return protocolintentC(prot,info,addinfo,service,contextname)
+
+    if service == "service":
+        serviceintentC(service,addinfo,info,contextname)
+
+    speech = "I am sorry, but I do not know much about this topic... However, I can ask someone and get back to you, if thats okay 😊"
+
+
+    #contextname = "definition_intent" 
+    #add reset context for no follow up and change context params to something more useful 
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
+
+
 def defintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
     networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
