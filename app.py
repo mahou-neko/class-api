@@ -1139,14 +1139,13 @@ def layerintentC(layer, info, addinfo, model, contextname, newInf):
             newInf = " "
 
         #contextname = "layer_conversation"
-    elif layer in layermodel:
-        if newInf == "modelMore" and (model != "OSI" or model != "TCP/IP"):
+    elif newInf == "modelMore" and (model != "OSI" or model != "TCP/IP"):
             speech = "Which layer would you like to hear more about? 😎"
             newInf = " "
-        else:
-            speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
-            layer = "layer"
-            newInf = "modelMore"
+    elif layer in layermodel:
+        speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
+        layer = "layer"
+        newInf = "modelMore"
         #contextname = "layer_model"
         #addinfo = "more"
     else:
