@@ -894,6 +894,8 @@ def congestionintentC(cong,info,layer,addinfo,contextname):
             addinfo = "more22"
         if addinfo == "more4":
             addinfo = "more44"
+        if addinfo == "moreCG":
+            addinfo = " "
         return {
         "speech": speech,
         "displayText": speech,
@@ -904,7 +906,6 @@ def congestionintentC(cong,info,layer,addinfo,contextname):
         speech = con_methods[cong]
         if cong == "congestion control general":
             addinfo = "moreCG"
-            cong = " "
         if cong == "RED":
             addinfo = "moreRed"
     if info in cong_defs:
