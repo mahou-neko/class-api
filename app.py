@@ -888,7 +888,7 @@ def congestionintentC(cong,info,layer,addinfo,contextname):
                     'TCP congestion control':'Congestion control via TCP is deployed either with Reno or Tahoe. Whenever duplicate ACKs are received either a slow start or a fast recovery is performed',
                     'RED':'Random Early Detection is a queueing discipline for a network scheduler suited for congestion avoidance. Do you want to know more?',
                     'congestion control general':'Alright 😎 Network Congestion is the reduced quality of service that occurs when a network node is carrying more data than it can handle. Typical effects include queueing delay, packet loss or the blocking of new connections. A consequence of congestion is that an incremental increase in offered load leads either only to a small increase or even a decrease in network throughput. Congestion control tries to combat this issue. Layer 2 and 4 of the OSI model are concerned with congestion control. Would you like to know more?'}
-    if addinfo in cong_defs and cong not in con_methods:
+    if addinfo in cong_defs and cong == "congestion control general":
         speech = cong_defs[addinfo]
         if addinfo == "more2":
             addinfo = "more22"
