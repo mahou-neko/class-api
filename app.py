@@ -1129,7 +1129,8 @@ def layerintentC(layer, info, addinfo, model, contextname, newInf):
     if newInf == "modelMore" and (model != "OSI" or model != "TCP/IP"):
             speech = "Which layer would you like to hear more about? 😎"
             newInf = " "
-    
+            addinfo = " "
+
     elif layer in layerdef:
         speech = layerdef[layer] + " Would you like to hear more? ☺️"
         if layer == "layer" and addinfo == "more":
