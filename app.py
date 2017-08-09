@@ -209,7 +209,24 @@ def processRequest(req):
         cong = parameters.get("congestion_control")
         service = parameters.get("Service")
         layer = parameters.get("layer")
-        res = explanationintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer)
+        newInf = parameters.get("newInf")
+        res = explanationintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf)
+
+    elif req.get("result").get("action")=="def_intent":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        newInf = parameters.get("newInf")
+        res = defintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf)
 
     #elif req.get("result").get("action")=="greeting":
         #result = req.get("result")
@@ -229,6 +246,103 @@ def makeYqlQuery(req):
         return None
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
+
+def defintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
+    protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
+    networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
+    models = ['OSI','TCP/IP','model']
+    congestioncontrols = ['s-aloha','CSMA','CSMA/CD','CSMA/CA','RED','congestion control general','TCP congestion control','reno',
+                            'tahoe','aloha']
+    topologies = ['topology','centralised','decentralised','federal','overlay','networktopology','symmetric',
+                    'Asymmetric','peer-to-peer','p2pv1','p2pv2','dht','structured peer','unstructured peer']
+    layers = ['physical layer', 'data link layer', 'network layer', 'transport layer', 'session layer', 'presentation layer',
+                'application layer', 'layer', 'internet', 'link', 'osi-layers', 'tcpip-layers','specific layer']
+    networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
+
+    contextname = "definition_conversation"
+    addinfo = "defin"
+
+    if topo in topologies:
+        speech = "Definition of " + topo + " Would you like to hear more? 😊"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Topologies":topo,"Information":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+    if cong in congestioncontrols:
+        speech = "Definition of " + cong + " Would you like to hear more? 😊"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"congestion_control":cong,"Information":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+    if layer in layers:
+        speech = "Definition of " + layer + " Would you like to hear more? 😊"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"Information":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+    if model in models:
+        speech = "Definition of " + model + " Would you like to hear more? 😊"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Models":model,"Information":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+    if netarch in networkarchs:
+        speech = "Definition of " + netarch + " Would you like to hear more? 😊"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Information":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+    if netcomp in networkcomps:
+        speech = "Definition of " + networkcomps + " Would you like to hear more? 😊"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Components":netcomp,"Information":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+    if prot in protocols:
+        speech = "Definition of " + prot + " Would you like to hear more? 😊"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"protocols":prot,"Information":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+
+    if service == "service":
+        speech = "Definition of " + service + " Would you like to hear more? 😊"
+        return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"protocols":prot,"Information":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"}
+
+    speech = "I am sorry, but I do not know much about this topic... However, I can ask someone and get back to you, if thats okay 😊"
+
+
+    #contextname = "definition_intent" 
+    #add reset context for no follow up and change context params to something more useful 
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"Models":model,"congestion_control":cong,"Information":info,"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
+
 
 def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
