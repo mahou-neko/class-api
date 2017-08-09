@@ -898,12 +898,13 @@ def congestionintentC(cong,info,layer,addinfo,contextname):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"congestion_control":cong,"info":info,"addInfo":addinfo}}],
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"congestion_control":cong,"info":info,"addInfo":addinfo,"layer":layer}}],
         "source": "apiai-weather-webhook-sample"}
     if cong in con_methods:
         speech = con_methods[cong]
         if cong == "congestion control general":
             addinfo = "moreCG"
+            cong = " "
         if cong == "RED":
             addinfo = "moreRed"
     if info in cong_defs:
