@@ -228,6 +228,38 @@ def processRequest(req):
         newInf = parameters.get("newInf")
         res = defintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf)
 
+    elif req.get("result").get("action")=="detail_intent":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        newInf = parameters.get("newInf")
+        res = detailintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf)
+
+    elif req.get("result").get("action")=="diff_intent":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        newInf = parameters.get("newInf")
+        res = diffintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf)
+
     #elif req.get("result").get("action")=="greeting":
         #result = req.get("result")
         #parameters = result.get("parameters")
@@ -247,6 +279,96 @@ def makeYqlQuery(req):
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
+def diffintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
+    protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
+    networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
+    models = ['OSI','TCP/IP','model']
+    congestioncontrols = ['s-aloha','CSMA','CSMA/CD','CSMA/CA','RED','congestion control general','TCP congestion control','reno',
+                            'tahoe','aloha']
+    topologies = ['topology','centralised','decentralised','federal','overlay','networktopology','symmetric',
+                    'Asymmetric','peer-to-peer','p2pv1','p2pv2','dht','structured peer','unstructured peer']
+    layers = ['physical layer', 'data link layer', 'network layer', 'transport layer', 'session layer', 'presentation layer',
+                'application layer', 'layer', 'internet', 'link', 'osi-layers', 'tcpip-layers','specific layer']
+    networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
+
+    contextname = "difference_conversation"
+    addinfo = "diff"
+
+    if topo in topologies:
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname) #add contextname to params and change context accordingly 
+    if cong in congestioncontrols:
+        return congestionintentC(cong,info,layer,addinfo,contextname)
+    if layer in layers:
+        return layerintentC(layer,info,addinfo,model,contextname,newInf)
+    if model in models:
+        return modelintentC(model,info,addinfo,contextname,newInf)
+    if netarch in networkarchs or netcomp in networkcomps:
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname)
+    if prot in protocols:
+        return protocolintentC(prot,info,addinfo,service,contextname)
+
+    if service == "service":
+        serviceintentC(service,addinfo,info,contextname)
+
+    speech = "I am sorry, but I do not know much about this topic... However, I can ask someone and get back to you, if thats okay 😊"
+
+
+    #contextname = "definition_intent" 
+    #add reset context for no follow up and change context params to something more useful 
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"Models":model,"congestion_control":cong,"Information":info,"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
+def detailintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
+    protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
+    networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
+    models = ['OSI','TCP/IP','model']
+    congestioncontrols = ['s-aloha','CSMA','CSMA/CD','CSMA/CA','RED','congestion control general','TCP congestion control','reno',
+                            'tahoe','aloha']
+    topologies = ['topology','centralised','decentralised','federal','overlay','networktopology','symmetric',
+                    'Asymmetric','peer-to-peer','p2pv1','p2pv2','dht','structured peer','unstructured peer']
+    layers = ['physical layer', 'data link layer', 'network layer', 'transport layer', 'session layer', 'presentation layer',
+                'application layer', 'layer', 'internet', 'link', 'osi-layers', 'tcpip-layers','specific layer']
+    networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
+
+    contextname = "detail_conversation"
+    addinfo = "detail"
+
+    if topo in topologies:
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname) #add contextname to params and change context accordingly 
+    if cong in congestioncontrols:
+        return congestionintentC(cong,info,layer,addinfo,contextname)
+    if layer in layers:
+        return layerintentC(layer,info,addinfo,model,contextname,newInf)
+    if model in models:
+        return modelintentC(model,info,addinfo,contextname,newInf)
+    if netarch in networkarchs or netcomp in networkcomps:
+        return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname)
+    if prot in protocols:
+        return protocolintentC(prot,info,addinfo,service,contextname)
+
+    if service == "service":
+        serviceintentC(service,addinfo,info,contextname)
+
+    speech = "I am sorry, but I do not know much about this topic... However, I can ask someone and get back to you, if thats okay 😊"
+
+
+    #contextname = "definition_intent" 
+    #add reset context for no follow up and change context params to something more useful 
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"Models":model,"congestion_control":cong,"Information":info,"Network-Architectures":netarch,"Network-Components":netcomp,"Topologies":topo,"protocols":prot,"info":info,"addInfo":addinfo}}],
+        "source": "apiai-weather-webhook-sample"
+    }
+
 def explanationintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
     networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
@@ -259,7 +381,7 @@ def explanationintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,
                 'application layer', 'layer', 'internet', 'link', 'osi-layers', 'tcpip-layers','specific layer']
     networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
 
-    contextname = "definition_conversation"
+    contextname = "explanation_conversation"
     addinfo = "expl"
 
     if topo in topologies:
