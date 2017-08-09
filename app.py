@@ -1127,7 +1127,7 @@ def layerintentC(layer, info, addinfo, model, contextname, newInf):
                     'more':'When it comes to the communications, TCP/IP supports only connectionless communication emanating from the network layer. OSI, on the other hand, seems to do quite well, supporting both connectionless and connection-oriented communication within the network layer. Last but not least is the protocol dependency of the two. TCP/IP is a protocol dependent model, whereas OSI is a protocol independent standard.'}
 
     if layer in layerdef:
-        speech = layerdef[layer] + " Would you like to hear more? ☺️" 
+        speech = layerdef[layer] + " Would you like to hear more? ☺️"
         if layer == "layer" and addinfo == "more":
             speech = "Great! Would you like to hear more about osi layers or tcp/ip layers?"
             addinfo = ""
@@ -1140,8 +1140,13 @@ def layerintentC(layer, info, addinfo, model, contextname, newInf):
 
         #contextname = "layer_conversation"
     elif layer in layermodel:
-        speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
-        layer = "layer"
+        if newInf == "modelMore" and (model != "OSI" or model != "TCP/IP"):
+            speech = "Which layer would you like to hear more about? 😎"
+            newInf = " "
+        else:
+            speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
+            layer = "layer"
+            newInf = "modelMore"
         #contextname = "layer_model"
         #addinfo = "more"
     else:
