@@ -303,7 +303,7 @@ def defintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,ne
         "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Network-Architectures":netarch,"Information":info,"addInfo":addinfo}}],
         "source": "apiai-weather-webhook-sample"}
     if netcomp in networkcomps:
-        speech = "Definition of " + networkcomps + " Would you like to hear more? 😊"
+        speech = "Definition of " + netcomp + " Would you like to hear more? 😊"
         return {
         "speech": speech,
         "displayText": speech,
@@ -325,7 +325,7 @@ def defintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,ne
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"protocols":prot,"Information":info,"addInfo":addinfo}}],
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Service":service,"Information":info,"addInfo":addinfo}}],
         "source": "apiai-weather-webhook-sample"}
 
     speech = "I am sorry, but I do not know much about this topic... However, I can ask someone and get back to you, if thats okay 😊"
