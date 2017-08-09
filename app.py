@@ -1039,7 +1039,7 @@ def modelintentC(model,info,addinfo,contextname,newInf):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Models":model,"info":info,"addInfo":addinfo}}],
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Models":model,"info":info,"addInfo":addinfo,"newInf":newInf}}],
         "source": "apiai-weather-webhook-sample"
     }
 
@@ -1132,9 +1132,11 @@ def layerintentC(layer, info, addinfo, model, contextname, newInf):
             speech = "Great! Would you like to hear more about osi layers or tcp/ip layers?"
             addinfo = ""
             info = " "
+            newInf = " "
         if addinfo == "more" and layer != "layer":
             speech = "Awesome ☺️ What would you like to know more about the " + layer +"?"
             info = " "
+            newInf = " "
 
         #contextname = "layer_conversation"
     elif layer in layermodel:
@@ -1170,7 +1172,7 @@ def layerintentC(layer, info, addinfo, model, contextname, newInf):
         "speech": speech,
         "displayText": speech,
         # "data": data,
-        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"info":info,"addInfo":addinfo,"Models":model}}],
+        "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"layer":layer,"info":info,"addInfo":addinfo,"Models":model,"newInf":newInf}}],
         "source": "apiai-weather-webhook-sample"
     }
 
