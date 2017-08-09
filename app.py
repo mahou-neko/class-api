@@ -177,7 +177,8 @@ def processRequest(req):
         cong = parameters.get("congestion_control")
         service = parameters.get("Service")
         layer = parameters.get("layer")
-        res = acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer)
+        newInf = parameters.get("newInf")
+        res = acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf)
 
     elif req.get("result").get("action")=="definition_intent":
         result = req.get("result")
@@ -192,7 +193,8 @@ def processRequest(req):
         cong = parameters.get("congestion_control")
         service = parameters.get("Service")
         layer = parameters.get("layer")
-        res = definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer)
+        newInf = parameters.get("newInf")
+        res = definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf)
 
     elif req.get("result").get("action")=="explanation_intent":
         result = req.get("result")
@@ -228,7 +230,7 @@ def makeYqlQuery(req):
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
-def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer):
+def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
     networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
     models = ['OSI','TCP/IP','model']
@@ -247,9 +249,9 @@ def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,l
     if cong in congestioncontrols:
         return congestionintentC(cong,info,layer,addinfo,contextname)
     if layer in layers:
-        return layerintentC(layer,info,addinfo,model,contextname)
+        return layerintentC(layer,info,addinfo,model,contextname,newInf)
     if model in models:
-        return modelintentC(model,info,addinfo,contextname)
+        return modelintentC(model,info,addinfo,contextname,newInf)
     if netarch in networkarchs or netcomp in networkcomps:
         return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname)
     if prot in protocols:
@@ -272,7 +274,7 @@ def definitionintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,l
         "source": "apiai-weather-webhook-sample"
     }
 
-def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer):
+def acronymintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInd):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC']
     networkarchs = ['SOA','cloud','SAAS','IAAS','PAAS','client-server','distributed system']
     models = ['OSI','TCP/IP','model']
@@ -991,7 +993,7 @@ def modelintent(model,info,addinfo):
         "source": "apiai-weather-webhook-sample"
     }
 
-def modelintentC(model,info,addinfo,contextname):
+def modelintentC(model,info,addinfo,contextname,newInf):
     model_defs = {'TCP/IP':'Alright 😊 The Internet protocol suite provides end-to-end data communication specifying how data should be packetized, addressed, transmitted, routed and received. This functionality is organized into four abstraction layers which are used to sort all related protocols according to the scope of networking involved.',
                     'OSI':'Got cha! 😎 The Open Systems Interconnection model (OSI model) is a conceptual model that characterizes and standardizes the communication functions of a telecommunication or computing system without regard to their underlying internal structure and technology. Its goal is the interoperability of diverse communication systems with standard protocols. The model partitions a communication system into abstraction layers. The original version of the model defined seven layers.',
                     'model':'There are two types of conceptual models which are used on the Internet and similar comupter networks to facilitate communication and offer services. One would be the TCP/IP model and the other would be the OSI model. 😊',
@@ -1020,17 +1022,18 @@ def modelintentC(model,info,addinfo,contextname):
             "contextOut": [{"name":contextname,"lifespan":3,"parameters":{"Models":model,"info":info,"addInfo":addinfo}}],
             "source": "apiai-weather-webhook-sample"
             }
-    if info == "more":
+    if newInf == "more":
         #contextname = "acronym_conversation"
         if model == "TCP/IP": #set different context
-            return layerintentC("tcpip-layers","general"," "," ",contextname) #reset models followup for it to work with layers
+            return layerintentC("tcpip-layers","general"," "," ",contextname,newInf) #reset models followup for it to work with layers
         elif model == "OSI":
-            return layerintentC("osi-layers","general"," "," ",contextname)
+            return layerintentC("osi-layers","general"," "," ",contextname,newInf)
         elif model == "model":
             speech = "Which one would you like to hear more about? 😎"
     if info == "difference":
         speech = model_defs[info] #define own return here with layer contexts
         addinfo = "moreD"
+
     #info = "more"
     return {
         "speech": speech,
@@ -1102,7 +1105,7 @@ def layerintent(layer, info, addinfo, model):
         "source": "apiai-weather-webhook-sample"
     }
 
-def layerintentC(layer, info, addinfo, model, contextname):
+def layerintentC(layer, info, addinfo, model, contextname, newInf):
     layerdef = {'physical layer':'The physical layer handels mechanical and electrical/optical linkage. It converts logical symbols into electrical(optical) ones and measures optical signals to reconstruct logical symbols', 
     'data link layer':'Got it! ☺️ The data link layer covers transmission errors and handels media access. \n It is also concerned with congestion control.', 
     'network layer':'On the network layer paths from senders to recipients are chosen. Hence this layer also has to cope with heterogenius subnets and is responsibe for accounting.',
