@@ -1126,7 +1126,11 @@ def layerintentC(layer, info, addinfo, model, contextname, newInf):
                     'difference':'When it comes to general reliability, TCP/IP is considered to be a more reliable option as opposed to OSI model. The OSI model is, in most cases, referred to as a reference tool, being the older of the two models. OSI is also known for its strict protocol and boundaries. This is not the case with TCP/IP. It allows for a loosening of the rules, provided the general guidelines are met. Would you like to hear more?',
                     'more':'When it comes to the communications, TCP/IP supports only connectionless communication emanating from the network layer. OSI, on the other hand, seems to do quite well, supporting both connectionless and connection-oriented communication within the network layer. Last but not least is the protocol dependency of the two. TCP/IP is a protocol dependent model, whereas OSI is a protocol independent standard.'}
 
-    if layer in layerdef:
+    if newInf == "modelMore" and (model != "OSI" or model != "TCP/IP"):
+            speech = "Which layer would you like to hear more about? 😎"
+            newInf = " "
+    
+    elif layer in layerdef:
         speech = layerdef[layer] + " Would you like to hear more? ☺️"
         if layer == "layer" and addinfo == "more":
             speech = "Great! Would you like to hear more about osi layers or tcp/ip layers?"
@@ -1139,9 +1143,6 @@ def layerintentC(layer, info, addinfo, model, contextname, newInf):
             newInf = " "
 
         #contextname = "layer_conversation"
-    elif newInf == "modelMore" and (model != "OSI" or model != "TCP/IP"):
-            speech = "Which layer would you like to hear more about? 😎"
-            newInf = " "
     elif layer in layermodel:
         speech = layermodel[layer] + " Shall I tell you more about the layers of the specific model? ☺️" #add for yes followup custom hear more
         layer = "layer"
