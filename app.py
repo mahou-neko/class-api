@@ -260,6 +260,38 @@ def processRequest(req):
         newInf = parameters.get("newInf")
         res = def_event()
 
+    elif req.get("result").get("action")=="details_event":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        newInf = parameters.get("newInf")
+        res = detail_event()
+
+    elif req.get("result").get("action")=="expl_event":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        newInf = parameters.get("newInf")
+        res = expl_event()
+
     elif req.get("result").get("action")=="diff_intent":
         result = req.get("result")
         parameters = result.get("parameters")
@@ -297,6 +329,12 @@ def makeYqlQuery(req):
 
 def def_event():
     return{"followupEvent":{"name":"defevent","data":{" ":" "}}}
+
+def expl_event():
+    return{"followupEvent":{"name":"explevent","data":{" ":" "}}}
+
+def detail_event():
+    return{"followupEvent":{"name":"detailsevent","data":{" ":" "}}}
 
 def diffintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
