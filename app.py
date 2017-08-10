@@ -244,6 +244,22 @@ def processRequest(req):
         newInf = parameters.get("newInf")
         res = detailintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf)
 
+    elif req.get("result").get("action")=="def_event":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        info = parameters.get("Information")
+        addinfo = parameters.get("addInfo")
+        netarch = parameters.get("Network-Architectures")
+        netcomp = parameters.get("Network-Components")
+        topo = parameters.get("Topologies")
+        prot = parameters.get("protocols")
+        model = parameters.get("Models")
+        cong = parameters.get("congestion_control")
+        service = parameters.get("Service")
+        layer = parameters.get("layer")
+        newInf = parameters.get("newInf")
+        res = def_event()
+
     elif req.get("result").get("action")=="diff_intent":
         result = req.get("result")
         parameters = result.get("parameters")
@@ -278,6 +294,9 @@ def makeYqlQuery(req):
         return None
 
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
+
+def def_event():
+    return{"followupEvent":{"name":"defevent","data":{" ":" "}}}
 
 def diffintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,newInf):
     protocols = ['TCP','HTTP','SMTP','IMAP','DNS','SIP','RTP','HTML','IP','UDP','protocol','RPC'] #none handeling
