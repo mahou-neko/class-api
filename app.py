@@ -349,7 +349,8 @@ def diffintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,n
     networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
 
     contextname = "difference_conversation"
-    addinfo = "diff"
+    #addinfo = "diff"
+    intentInfo = "detail"
 
     if topo in topologies:
         return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname) #add contextname to params and change context accordingly 
@@ -394,7 +395,8 @@ def detailintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer
     networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
 
     contextname = "detail_conversation"
-    addinfo = "detail"
+    #addinfo = "detail"
+    intentInfo = "detail"
 
     if topo in topologies:
         return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname) #add contextname to params and change context accordingly 
@@ -439,7 +441,8 @@ def explanationintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,
     networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
 
     contextname = "explanation_conversation"
-    addinfo = "expl"
+    #addinfo = "expl"
+    intentInfo = "detail"
 
     if topo in topologies:
         return netarchintentC(netarch,netcomp,topo,addinfo,info,contextname) #add contextname to params and change context accordingly 
@@ -486,7 +489,8 @@ def defintent(info,addinfo,netarch,netcomp,topo,prot,model,cong,service,layer,ne
     networkcomps = ['network','client','server','thin client','thin server','fat client','fat server','nodes']
 
     contextname = "definition_conversation"
-    addinfo = "defin"
+    #addinfo = "defin"
+    intentInfo = "detail"
 
     if topo in topologies:
         speech = "Definition of " + topo + " Would you like to hear more? 😊"
