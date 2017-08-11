@@ -1236,10 +1236,13 @@ def congestionintentC(cong,info,layer,addinfo,contextname):
         speech = cong_defs[addinfo]
         if addinfo == "more2":
             addinfo = "more22"
+            layer = " "
         if addinfo == "more4":
             addinfo = "more44"
+            layer = " "
         if addinfo == "moreCG":
             addinfo = " "
+            layer = " "
         return {
         "speech": speech,
         "displayText": speech,
